@@ -12,7 +12,9 @@ import android.view.ViewGroup;
 import com.example.gerard.socialapp.GlideApp;
 import com.example.gerard.socialapp.R;
 import com.example.gerard.socialapp.model.Post;
+import com.example.gerard.socialapp.model.TransformadorPostAJson;
 import com.example.gerard.socialapp.view.PostViewHolder;
+import com.example.gerard.socialapp.view.activity.DetailPostActivity;
 import com.example.gerard.socialapp.view.activity.MediaActivity;
 import com.example.gerard.socialapp.view.activity.PerfilActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -59,6 +61,7 @@ public class PostsFragment extends Fragment {
             protected void onBindViewHolder(final PostViewHolder viewHolder, int position, final Post post) {
                 final String postKey = getRef(position).getKey();
 
+
                 viewHolder.author.setText(post.author);
                 GlideApp.with(PostsFragment.this).load(post.authorPhotoUrl).circleCrop().into(viewHolder.photo);
                 viewHolder.photo.setOnClickListener(new View.OnClickListener() {
@@ -68,6 +71,15 @@ public class PostsFragment extends Fragment {
                         intent.putExtra(USUARIO_POST_ID, post.uid);
                         intent.putExtra(USUARIO_NOMBRE, post.author);
                         intent.putExtra(USUARIO_FOTO, post.authorPhotoUrl);
+                        startActivity(intent);
+                    }
+                });
+                viewHolder.cardPost.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getContext(), DetailPostActivity.class);
+                        intent.putExtra("postKey", postKey);
+                        intent.putExtra("post", TransformadorPostAJson.objetoAJson(post));
                         startActivity(intent);
                     }
                 });

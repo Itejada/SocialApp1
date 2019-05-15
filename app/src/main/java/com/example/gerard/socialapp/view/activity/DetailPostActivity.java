@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.example.gerard.socialapp.GlideApp;
 import com.example.gerard.socialapp.R;
 import com.example.gerard.socialapp.model.Comentario;
-import com.example.gerard.socialapp.model.ConverterPostToJSon;
+import com.example.gerard.socialapp.model.TransformadorPostAJson;
 import com.example.gerard.socialapp.model.Post;
 import com.example.gerard.socialapp.view.ComentarioViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -48,12 +48,12 @@ public class DetailPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_post);
         final String postKey = getIntent().getStringExtra("postKey");
-        final Post post = ConverterPostToJSon.stringToSomeObject(getIntent().getStringExtra("post"));
+        final Post post = TransformadorPostAJson.stringToSomeObject(getIntent().getStringExtra("post"));
 
         dbr = FirebaseDatabase.getInstance().getReference();
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<Comentario>()
+        FirebaseRecyclerOptions opcionesComentario = new FirebaseRecyclerOptions.Builder<Comentario>()
                 .setQuery(dbr.child("posts/comments/"+postKey), Comentario.class)
                 .setLifecycleOwner(this)
                 .build();
@@ -118,8 +118,8 @@ public class DetailPostActivity extends AppCompatActivity {
         } else {
             detailPostAIV.setVisibility(View.GONE);
         }
-
-        findViewById(R.id.detailSendCommnet).setOnClickListener(new View.OnClickListener() {
+//TODO comentario
+        findViewById(R.id.boton_enviar_comentario).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Comentario comentario = new Comentario(mUser.getDisplayName(),detailComment.getText().toString());
@@ -131,22 +131,24 @@ public class DetailPostActivity extends AppCompatActivity {
 
         RecyclerView recycler = findViewById(R.id.rvComments);
         recycler.setLayoutManager(new LinearLayoutManager(this));
-        recycler.setAdapter(new FirebaseRecyclerAdapter<Comentario, ComentarioViewHolder>(options) {
+
+
+
+        recycler.setAdapter(new FirebaseRecyclerAdapter<Comentario, ComentarioViewHolder>(opcionesComentario) {
             @Override
             public ComentarioViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+                //TODO inflamos el comentario
                 LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
                 return new ComentarioViewHolder(inflater.inflate(R.layout.item_comment, viewGroup, false));
             }
 
-            //Todo estudia inutil-> (isma)
+
             @Override
             protected void onBindViewHolder(final ComentarioViewHolder viewHolder, int position, final Comentario comentario) {
+                //TODO se rellena el comentriao jeje
                 viewHolder.userComentarioName.setText(comentario.name + ": ");
                 viewHolder.userComentarioData.setText(comentario.comentario);
             }
         });
-
-
-
     }
 }
