@@ -12,26 +12,28 @@ import com.example.gerard.socialapp.R;
 
 public class MediaActivity extends AppCompatActivity {
 
-    ImageView mImageView;
     VideoView mVideoView;
+    ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_media);
 
-        mImageView = findViewById(R.id.imageView);
+
         mVideoView = findViewById(R.id.videoView);
+        mImageView = findViewById(R.id.imageView);
 
         Intent intent = getIntent();
-        String mediaUrl = intent.getStringExtra("mediaUrl");
-        String mediaType = intent.getStringExtra("mediaType");
+        String mediaType = intent.getStringExtra(PerfilActivity.MEDIA_TYPE);
+        String mediaUrl = intent.getStringExtra(PerfilActivity.MEDIA_URL);
 
         if ("video".equals(mediaType) || "audio".equals(mediaType)) {
             MediaController mc = new MediaController(this);
-            mc.setAnchorView(mVideoView);
-            mVideoView.setMediaController(mc);
+                mc.setAnchorView(mVideoView);
+
             mVideoView.setVideoPath(mediaUrl);
+            mVideoView.setMediaController(mc);
             mVideoView.start();
         } else if ("image".equals(mediaType)) {
             GlideApp.with(this).load(mediaUrl).into(mImageView);

@@ -74,6 +74,7 @@ public class NewPostActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO_PERMISSION);
 
         mReference = FirebaseDatabase.getInstance().getReference();
+        //user actual
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
         mPostTextField = findViewById(R.id.postText);
@@ -81,7 +82,7 @@ public class NewPostActivity extends AppCompatActivity {
         mPublishButton = findViewById(R.id.publish);
         mImageButton = findViewById(R.id.btnImage);
         mVideoButton = findViewById(R.id.btnVideo);
-        mAudioButton = findViewById(R.id.btnAudio);
+        mAudioButton = findViewById(R.id.btnAudio); //fixme
         mCameraImageButton = findViewById(R.id.btnCameraImage);
         mCameraVideoButton = findViewById(R.id.btnCameraVideo);
         mMicButton = findViewById(R.id.btnMic);
@@ -106,7 +107,7 @@ public class NewPostActivity extends AppCompatActivity {
                 dispatchTakeVideoIntent();
             }
         });
-
+        //FIXME micro
         mMicButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -133,7 +134,7 @@ public class NewPostActivity extends AppCompatActivity {
                 startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI), RC_VIDEO_PICK);
             }
         });
-
+        //FIXME
         mAudioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -193,6 +194,8 @@ public class NewPostActivity extends AppCompatActivity {
         }
 
         mPublishButton.setEnabled(false);
+        if(recording) stopRecording();// se pausa la grabacion si publicamos grabando
+        // se sube la grabacion automaticamente
 
         if (mediaType == null) {
             writeNewPost(postText, null);
@@ -223,7 +226,9 @@ public class NewPostActivity extends AppCompatActivity {
 
     private void uploadAndWriteNewPost(final String postText){
         if(mediaType != null) {
-            FirebaseStorage.getInstance().getReference(mediaType + "/" + UUID.randomUUID().toString() + mediaUri.getLastPathSegment()).putFile(mediaUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            FirebaseStorage.getInstance().getReference(mediaType + "/" + UUID.randomUUID()
+                    .toString() + mediaUri.getLastPathSegment())
+                    .putFile(mediaUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                     return task.getResult().getStorage().getDownloadUrl();

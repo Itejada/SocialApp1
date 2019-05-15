@@ -14,6 +14,7 @@ import com.example.gerard.socialapp.R;
 import com.example.gerard.socialapp.model.Post;
 import com.example.gerard.socialapp.view.PostViewHolder;
 import com.example.gerard.socialapp.view.activity.MediaActivity;
+import com.example.gerard.socialapp.view.activity.PerfilActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,6 +27,11 @@ import com.google.firebase.database.Query;
 public class PostsFragment extends Fragment {
     public DatabaseReference mReference;
     public FirebaseUser mUser;
+    public static final String USUARIO_POST_ID="USUARIO_POST_ID";
+    public static final String USUARIO_NOMBRE="USUARIO_NOMBRE";
+    public static final String USUARIO_FOTO="USUARIO_FOTO";
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,7 +61,16 @@ public class PostsFragment extends Fragment {
 
                 viewHolder.author.setText(post.author);
                 GlideApp.with(PostsFragment.this).load(post.authorPhotoUrl).circleCrop().into(viewHolder.photo);
-
+                viewHolder.photo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getContext(), PerfilActivity.class);
+                        intent.putExtra(USUARIO_POST_ID, post.uid);
+                        intent.putExtra(USUARIO_NOMBRE, post.author);
+                        intent.putExtra(USUARIO_FOTO, post.authorPhotoUrl);
+                        startActivity(intent);
+                    }
+                });
                 if (post.likes.containsKey(mUser.getUid())) {
                     viewHolder.like.setImageResource(R.drawable.heart_on);
                     viewHolder.numLikes.setTextColor(getResources().getColor(R.color.red));

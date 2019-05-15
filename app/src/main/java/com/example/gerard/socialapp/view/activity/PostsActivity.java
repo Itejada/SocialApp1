@@ -45,7 +45,6 @@ public class PostsActivity extends AppCompatActivity
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         mViewPager = findViewById(R.id.container);
@@ -75,9 +74,9 @@ public class PostsActivity extends AppCompatActivity
 
         /* Load user info in drawer header*/
         View header = navigationView.getHeaderView(0);
-        ImageView photo = header.findViewById(R.id.userPhoto);
         TextView name = header.findViewById(R.id.userName);
         TextView email = header.findViewById(R.id.userEmail);
+        ImageView photo = header.findViewById(R.id.userPhoto);
 
         GlideApp.with(this)
                 .load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString())
@@ -85,16 +84,6 @@ public class PostsActivity extends AppCompatActivity
                 .into(photo);
         name.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
         email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override
@@ -112,6 +101,28 @@ public class PostsActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position){
+                case 0: return new PostsFragment();
+                case 1: return new LikePostsFragment();
+                case 2: return new UserPostsFragment();
+                default: return new PostsFragment();
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 3;
+        }
     }
 
     @Override
@@ -145,25 +156,13 @@ public class PostsActivity extends AppCompatActivity
         return true;
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position){
-                case 0: return new PostsFragment();
-                case 1: return new LikePostsFragment();
-                case 2: return new UserPostsFragment();
-                default: return new PostsFragment();
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return 3;
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
     }
 }
